@@ -1,0 +1,31 @@
+# =============================================================
+# claude-instructions — workspace_web 의 Claude 지침/설정만 관리
+#
+# 정책: "전부 무시" 후, 커밋할 지침 파일만 화이트리스트로 되살린다.
+#   - 각 소스 프로젝트(web-*, java_backend_workspace, python_rag_workspace,
+#     typescript_react_frontend_workspace 등)는 각자 별도 저장소로 관리한다.
+#   - .omc/ 등 런타임 상태는 커밋하지 않는다.
+#   - 새 지침 파일을 루트에 추가하면 아래 화이트리스트에도 명시한다.
+# =============================================================
+
+# 1) 최상위 전부 무시
+/*
+
+# 2) 커밋할 지침/설정 (화이트리스트)
+!/.gitignore
+!/README.md
+!/CLAUDE.md
+
+# 3) .claude 디렉터리(규칙·가이드)와 언어별 설정 폴더는 통째로 포함
+!/.claude/
+!/java_backend_workspace/
+!/python_rag_workspace/
+!/typescript_react_frontend_workspace/
+
+# 4) 단, 내부의 로컬/런타임/민감 항목은 위치와 무관하게 제외
+**/settings.local.json
+**/.omc/
+**/*.key
+**/*.pem
+**/*token*
+**/*secret*

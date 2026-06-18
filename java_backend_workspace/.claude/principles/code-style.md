@@ -1,0 +1,25 @@
+# 코드 스타일 (Iron Rule)
+
+- 프로젝트 포매터/린터 설정을 최우선으로 따른다. IDE 기본(알파벳 정렬, 4 spaces 들여쓰기, `final` 필드 우선)을 유지한다.
+- **영리한 추상화보다 명확한 이름의 작은 함수를 선호한다.**
+  - 제네릭 3중 nesting 으로 만든 한 줄 스트림보다, 이름이 설명해주는 private helper 2~3개로 나누는 쪽이 좋다.
+  - 검증 단계를 `validateDuplicate` / `checkStatus` / `resolveRelated` 처럼 의미 단위 private 메서드로 분리하는 스타일을 따른다.
+- **브라운필드 파일에서는 diff 표면을 최소화한다.**
+  - 기존 파일의 포매팅을 대량으로 바꾸지 않는다. 같은 PR 에 로직 변경과 포매팅이 섞이면 리뷰 반려.
+  - 포매팅만 정리하고 싶다면 별도 `style: ...` 커밋으로 분리.
+- **승인된 패턴 우선 재사용.**
+  - 아래 문서에 기재된 패턴·예시 외의 구조를 도입하려면 PR 본문에 근거를 남긴다.
+    - `.claude/rules/backend-conventions.md` / `backend-java-patterns.md` / `backend-design-patterns.md`
+- **안티패턴 금지 목록**:
+  - 컨트롤러에서 엔티티 직접 반환
+  - `@Data` 를 엔티티에 부착 (양방향 연관관계와 equals/hashCode 충돌)
+  - 서비스 안에서 `new ObjectMapper()`, `WebClient.create()` 등 공용 빈을 중복 생성
+  - 예외를 `RuntimeException` 으로 그대로 던지기 (`AppException` + `ErrorCode` 사용)
+  - `var` 로 타입 숨기기
+  - `@Autowired` 필드 주입 (테스트 슬라이스 제외)
+  - `Optional` 을 필드/파라미터에 사용
+  - 동일 변환 진입점을 record `from()` 과 MapStruct 양쪽에 두기
+  - 와일드카드 import (`java.util.*`)
+- **메서드 시그니처 개행 금지** — 라인 120자 초과 등 특별한 사유가 없으면 한 줄로 유지.
+- **주석은 WHY 를 남긴다.** WHAT 은 잘 지어진 이름과 타입이 대신한다. 불필요한 `// TODO` / `// FIXME` 를 남기려면 이슈 링크·복구 계획을 같이 적는다.
+- Lombok 사용 규칙은 `backend-conventions.md` 참조. 엔티티/컴포넌트/DTO 별로 허용 조합이 다르다.
