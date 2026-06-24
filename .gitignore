@@ -25,6 +25,7 @@
 # 4) 단, 내부의 로컬/런타임/민감 항목은 위치와 무관하게 제외
 **/settings.local.json
 **/.omc/
+**/.idea/
 **/*.key
 **/*.pem
 **/*token*
