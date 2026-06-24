@@ -5,6 +5,14 @@
 
 ---
 
+## 공통 코딩 원칙 (Iron Rules)
+
+최상위 `.claude/principles/` 는 스택과 무관한 **공통 Iron Rule 베이스**다 (보안·에러·완전성·코드스타일·프로젝트구조·search-before-build·agent-docs·api-conventions, 그리고 백엔드 전용 `database`·프론트 전용 `state-management`).
+각 하위 워크스페이스의 `.claude/principles/<같은 파일명>` 은 동일 원칙을 그 스택의 경로·API·명령으로 구체화하는 레이어다.
+충돌 시 **개념은 공통 베이스**를, **구체 예시는 프로젝트별 문서**를 따른다. 위 "프로젝트별 세부 규칙은 각 프로젝트의 `CLAUDE.md` 와 `.claude/rules/` 를 따른다"와 동일한 2단 상속 구조의 연장선이다.
+
+---
+
 ## 작업 진행 방식 — Loop Engineering (조건부 적용)
 
 **실질적 규모의 작업은 아래 루프를 따라 진행한다.** 사소한 작업은 적용하지 않고 바로 처리한다.
