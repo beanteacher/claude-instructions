@@ -30,3 +30,8 @@
 **/*.pem
 **/*token*
 **/*secret*
+
+# 5) 실제 소스 프로젝트는 각자 별도 저장소(github.com/beanteacher/kitchen-backend,
+#    kitchen-frontend)로 관리한다 — 여기엔 안 담는다.
+/java_backend_workspace/kitchen-backend/
+/typescript_react_frontend_workspace/kitchen-frontend/
