@@ -181,6 +181,30 @@ import styles from './Component.module.css';
 - **axios 0.30.4** — 해킹(supply chain attack)이 확인된 버전. 절대 설치 금지
 - axios 사용 시 반드시 위 버전을 피하고, 공식 릴리즈 노트에서 안전한 버전을 확인할 것
 
+## 테스트 규칙
+
+### FIRST 원칙
+
+| 원칙 | 핵심 |
+|------|------|
+| **F**ast | 외부 의존성 최소화, Mock/인메모리 활용 |
+| **I**solated | 테스트 간 상태 공유 금지 |
+| **R**epeatable | 환경 무관하게 동일 결과 |
+| **S**elf-validating | assert로 명확한 pass/fail |
+| **T**imely | 기능 구현과 동시에 작성 |
+
+### FE 테스트 도구
+
+| 도구 | 용도 |
+|------|------|
+| Vitest | zod 스키마·zustand 스토어·훅 단위 테스트 (`frontend-library-stack.md` 설정 참고) |
+| Testing Library | 컴포넌트 렌더링·상호작용 테스트 |
+| Playwright | 실제 브라우저로 도는 E2E — 백엔드와 실제로 붙어야 의미 있는 플로우(로그인, 결제, 핵심 폼)에 사용 |
+
+- 유닛/컴포넌트 테스트 파일은 테스트 대상 옆에 `*.test.ts(x)`로 배치(`frontend-library-stack.md` 참고). E2E는 `e2e/*.spec.ts`.
+- **테스트 없는 기능 구현 금지.** 최소 성공 케이스 1개 + 실패 케이스 1개는 유닛 테스트로 남긴다.
+- API 클라이언트·에러 파싱처럼 "실제 요청/응답이 오가야 드러나는 버그"(응답 바디 재사용, 헤더 누락, 직렬화 불일치 등)는 유닛 테스트(mock)로는 못 잡는다 — 핵심 플로우는 실제 서버를 띄운 E2E로 최소 1회 검증한다.
+
 ## TypeScript 규칙
 
 - `any` 사용 금지 — `unknown` 사용 후 타입 좁히기

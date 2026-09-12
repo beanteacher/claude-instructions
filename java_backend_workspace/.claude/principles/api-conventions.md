@@ -2,6 +2,8 @@
 
 - **경계에서 요청 입력을 검증한다. 클라이언트 페이로드를 절대 신뢰하지 않는다.**
   - 모든 요청 DTO 는 record + Bean Validation (`@NotNull`, `@NotBlank`, `@Size`, `@Positive`, `@Pattern` 등) 으로 선언.
+  - **`String` 필드는 예외 없이 `@Size(max=...)` (또는 `@Pattern` 정규식 안의 `{min,max}`)를 명시한다.** 없으면 DB 컬럼 길이를 넘는 값이 서비스 레이어까지 들어가 INSERT 시점에 죽어 400이 아니라 500이 나간다. bcrypt로 해싱하는 필드(비밀번호 등)는 72바이트를 넘으면 `PasswordEncoder.encode()`가 예외를 던지므로 반드시 `max=72`.
+    - 상한은 DB 컬럼 길이(스키마 문서) 이하로, 그 안에서 다시 실사용 기준으로 좁힌다. 프론트엔드와 상한을 맞춘다(`typescript_react_frontend_workspace`의 동일 원칙 참고). 구체적인 상한 값(업체명 50자 등)은 프로젝트 `.claude/rules/`에 표로 둔다.
   - 컨트롤러 파라미터에 `@Valid` 를 붙이고, 실패는 `GlobalExceptionHandler` 가 `VALIDATION_ERROR` 로 변환하도록 한다.
   - 식별자는 `@PathVariable` 로 받고 **서비스 레벨에서 소유권·권한을 재검증**한다 (URL 에 있다는 이유로 통과시키지 않는다).
 - **명시적 에러 코드가 포함된 안정적인 응답 형태를 반환한다.**

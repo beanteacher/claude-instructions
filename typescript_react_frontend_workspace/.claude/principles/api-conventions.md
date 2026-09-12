@@ -6,6 +6,7 @@
 - **`api/*-api.ts` 모듈만 `appAxios` 를 직접 호출한다.** 컴포넌트·훅·스토어에서 `appAxios` 또는 `axios` 를 직접 import 하지 않는다.
 - **`appApi` 래퍼 함수(`api/common/app-api.ts`)를 경유한다.** `appApi.get / post / put / patch / delete` 를 사용하고, `axios.request()` 를 직접 부르지 않는다.
 - **응답 타입은 `model/dto/*-dto.ts` 에 선언된 인터페이스로 받는다.** `any` 응답 타입 금지.
+- **폼 검증 스키마의 문자열 필드는 예외 없이 길이 상한(`.max(...)`)을 명시하고, 그 필드를 렌더링하는 입력 요소에도 동일한 값으로 `maxLength`를 건다.** 상한 값은 백엔드 DTO 검증과 반드시 동일해야 한다(백엔드가 먼저 정한다) — 한쪽만 바뀌면 정상 입력이 막히거나, 반대로 프론트는 통과시키는데 백엔드가 거부하는 불일치가 생긴다. 구체적인 상한 값은 프로젝트 `.claude/rules/`에 표로 둔다.
 - **쿼리 파라미터 직렬화는 `paramsSerializer` 에 위임한다.** `qs.stringify` 가 `api/common/axios.ts` 의 `appAxios` 에 이미 등록되어 있으므로 배열 파라미터를 수동으로 join 하지 않는다.
 - **React Query 키는 `[domain, 'list'|'detail', params?]` 튜플 컨벤션을 따른다.** mutation 성공 후에는 `queryClient.invalidateQueries({ queryKey: domainKeys.lists() })` 로 캐시를 무효화한다.
 
