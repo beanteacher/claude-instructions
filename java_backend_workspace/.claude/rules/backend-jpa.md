@@ -10,7 +10,16 @@
 - `@Getter` + `@NoArgsConstructor(access = AccessLevel.PROTECTED)`. `@Setter`·`@Data` 금지.
 - 만들 때는 `static create(...)`, 값을 바꿀 때는 뜻이 드러나는 도메인 메서드(`changePassword(...)`)를 쓴다.
 - ID 는 DB 에 맞춘다 (MySQL `IDENTITY`, Oracle `SEQUENCE`).
-- 연관관계를 쓰면 `fetch = LAZY`. 즉시 로딩은 이유를 주석으로 남긴다.
+- FK 컬럼은 `Long xxxId` 가 아니라 가리키는 엔티티로 연결한다: `@ManyToOne(fetch = LAZY)` + `@JoinColumn(name = "xxx_id")`.
+  즉시 로딩은 이유를 주석으로 남긴다.
+  - 가리킬 엔티티가 아직 없으면(그 기능을 나중에 만든다) `Long xxxId` 로 먼저 두고, 그 엔티티를 만들 때 연관관계로 바꾼다.
+    - id 로 둘 때는 바꿀 엔티티를 주석으로 남긴다: `// Order 엔티티를 만들면 @ManyToOne Order 로 바꾼다`
+    - 그 엔티티를 만들 때 `Order 로 바꾼다` 로 검색하고, 마이그레이션의 `REFERENCES {테이블}` 과 엔티티의 `Long xxxId` 도 함께 확인한다.
+    - 필드·`create(...)`·호출하는 서비스·테스트만 고친다. 컬럼과 FK 는 이미 있어 마이그레이션은 필요 없다.
+      없는 대상을 DB 가 막는지 보는 테스트는 `em.getReference(Order.class, 999_999L)` 로 넘긴다.
+  - 반대 방향 목록(`@OneToMany`)은 부모와 함께 저장·삭제하는 경우(cascade·orphanRemoval)에만 둔다.
+  - 메서드 이름 쿼리는 그대로 id 로 쓸 수 있다: `findByParentId(Long)` 는 `parent.id` 로 풀린다.
+    그래서 엔티티에 `getParentId()` 같은 편의 getter 를 두지 않는다 — Spring Data 가 그 이름을 속성으로 착각해 켜질 때 실패한다.
 - 스키마 검사(`ddl-auto: validate`)를 켠 프로젝트에서 JPA 기본 타입과 다른 컬럼은 `columnDefinition` 으로 맞춘다.
   `CHAR(n)` → `"char(n)"`, `TINYINT` → `"tinyint"`, `TEXT` → `"text"`. 안 맞추면 켜질 때 실패한다.
 
