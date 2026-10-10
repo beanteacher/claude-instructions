@@ -201,7 +201,7 @@ private ResultActions login(String userId, String password) throws Exception { .
 private org.springframework.test.web.servlet.ResultActions login(String userId, String password) throws Exception { ... }
 ```
 
-- **서비스 호출 뒤 빈 줄** — 서비스(다른 Bean) 호출을 한 줄로 따로 쓰고 이어서 `return` 할 때는, 호출과 `return` 사이에 빈 줄을 한 줄 둔다. `return` 안에서 바로 호출하는 한 줄짜리는 해당 없다.
+- **서비스 결과는 변수로 받고 빈 줄** — 컨트롤러는 서비스(다른 Bean) 호출 결과를 변수에 받은 뒤 `return` 한다. `return` 안에 서비스 호출을 넣지 않는다 (호출과 응답 감싸기가 한 줄에 겹쳐 읽기 어렵다). 호출과 `return` 사이에는 빈 줄을 한 줄 둔다. 반환값이 없는 호출(`void`)도 호출 뒤 빈 줄을 둔다.
 
 ```java
 // 권장
@@ -215,8 +215,8 @@ return ResponseEntity.ok()
 AuthService.LoginResult result = authService.login(request);
 return ResponseEntity.ok()...;
 
-// 해당 없음 (return 안에서 바로 호출)
-return ResponseEntity.ok(ApiResponse.success(productService.getById(id)));
+// 지양 (return 안에서 바로 호출)
+return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(categoryService.create(request)));
 ```
 
 ---
