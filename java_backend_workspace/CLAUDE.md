@@ -9,6 +9,7 @@ Java / Spring Boot 백엔드 프로젝트 전용 워크스페이스.
 - `backend-conventions.md` — 레이어 책임·명명·DTO record·API 설계·Spring·예외·테스트 규칙
 - `backend-java-patterns.md` — 레이어별 코드 예시 (product 도메인 기준)
 - `backend-design-patterns.md` — 레이어별 디자인 패턴 가이드·판단 기준
+- `backend-jpa.md` — 엔티티·Repository·QueryDSL 쿼리·조회 결과 DTO·트랜잭션 규칙
 - `backend-options/` — 프로젝트 초기화/기능/테스트 선택 모듈
   - `init-single` / `init-multi-module` / `init-msa` — 구조 선택
   - `init-redis` / `init-kafka` / `init-security` — 인프라 옵션

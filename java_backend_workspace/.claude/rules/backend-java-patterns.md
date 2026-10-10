@@ -107,9 +107,4 @@ public class ProductServiceImpl implements ProductService {
 
 ### repository/ProductRepository.java
 
-```java
-public interface ProductRepository extends JpaRepository<Product, Long> {
-    List<Product> findByCategoryIdAndStatus(Long categoryId, ProductStatus status);
-    Page<Product> findByBrandIdOrderByCreatedAtDesc(Long brandId, Pageable pageable);
-}
-```
+Repository·QueryDSL 예시는 `backend-jpa.md` 에 있다.

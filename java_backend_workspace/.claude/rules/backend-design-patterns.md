@@ -45,7 +45,7 @@ description: "백엔드 디자인 패턴 (Controller/Service/Domain/Repository �
 | 패턴 | 적용 시점 | 예시 |
 |------|-----------|------|
 | **Repository** | Spring Data JPA 기본 | `ProductRepository extends JpaRepository` |
-| **Specification** | 동적 쿼리 조건 조합 시 | `ProductSpec.hasCategory(cat).and(ProductSpec.priceBetween(min, max))` |
+| **Repository Custom + Impl** | 메서드 이름 쿼리로 안 되는 쿼리 (QueryDSL, `backend-jpa.md`) | `ProductRepositoryCustom` + `ProductRepositoryImpl` |
 | **Adapter** | 외부 시스템 연동을 내부 인터페이스로 변환 | `KakaoPayAdapter implements PaymentGateway` |
 
 ---
@@ -67,6 +67,6 @@ description: "백엔드 디자인 패턴 (Controller/Service/Domain/Repository �
 3. Entity 생성 시 검증/변환 로직 포함 → Factory Method 패턴
 4. 상태 변경 후 다른 모듈에 알려야 함 → Observer/Event 패턴
 5. 외부 API 호출 → Adapter 패턴으로 격리
-6. 동적 조건 조합 쿼리 → Specification 패턴
+6. 동적 조건·집계·조인 쿼리 → QueryDSL Repository Custom + Impl (`backend-jpa.md`)
 7. 위 조건에 해당 없으면 → 단순 구현 (과도한 패턴 적용 금지)
 ```

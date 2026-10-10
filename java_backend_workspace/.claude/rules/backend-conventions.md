@@ -1,7 +1,8 @@
 # 백엔드 코드 컨벤션 (규칙 전용)
 
 > **이 파일은 Spring Boot 백엔드의 범용 규칙·컨벤션만 포함합니다.**
-> 코드 예시는 `backend-java-patterns.md`, 디자인 패턴은 `backend-design-patterns.md`를 참고하세요.
+> 코드 예시는 `backend-java-patterns.md`, 디자인 패턴은 `backend-design-patterns.md`,
+> 엔티티·Repository·쿼리·트랜잭션은 `backend-jpa.md`를 참고하세요.
 
 ---
 
@@ -65,6 +66,10 @@
            (로그인 정보·경로 값 1~2개는 매개변수로 따로 넘긴다: changePassword(accountId, request))
         3. 요청 본문에 서비스가 믿으면 안 되는 값(화면 표시용 값 등)이 섞여 있다
         → 모두 아니면 Request 와 필드가 똑같은 Command 를 미리 만들지 않는다.
+
+규칙 9. 계층 사이(반환·매개변수)와 API 요청·응답에 Map 을 쓰지 않는다. 명시적 record 로 주고받는다.
+        키·값이 무엇인지 타입에 안 보이기 때문이다.
+        → 메서드 안에서 찾기용으로 잠깐 쓰는 지역 변수는 괜찮다.
 ```
 
 ```java
@@ -128,7 +133,6 @@ DELETE /api/v1/{resource}/{id}     삭제
 
 ## Spring 컨벤션
 
-- `@Transactional` — 쓰기 메서드에 적용. 클래스 레벨 `@Transactional` + 읽기 메서드에 `@Transactional(readOnly = true)`.
 - 생성자 주입 — `@RequiredArgsConstructor` 사용. `@Autowired` 필드 주입 금지.
   - 생성자를 직접 쓰지 않는다. 설정값(`@ConfigurationProperties`)에서 꺼낸 값은 필드로 옮기지 말고 properties 를 주입받아 쓸 때 읽는다. 고정값은 `static final` 상수로 둔다.
   - 예외: 켜질 때 한 번 만들고 잘못되면 바로 실패해야 하는 값(예: JWT 서명 키), `super(...)` 를 불러야 하는 예외 클래스.
