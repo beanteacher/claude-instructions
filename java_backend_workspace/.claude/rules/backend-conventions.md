@@ -96,6 +96,25 @@ DELETE /api/v1/{resource}/{id}     삭제
 
 - `@Transactional` — 쓰기 메서드에 적용. 클래스 레벨 `@Transactional` + 읽기 메서드에 `@Transactional(readOnly = true)`.
 - 생성자 주입 — `@RequiredArgsConstructor` 사용. `@Autowired` 필드 주입 금지.
+  - 생성자를 직접 쓰지 않는다. 설정값(`@ConfigurationProperties`)에서 꺼낸 값은 필드로 옮기지 말고 properties 를 주입받아 쓸 때 읽는다. 고정값은 `static final` 상수로 둔다.
+  - 예외: 켜질 때 한 번 만들고 잘못되면 바로 실패해야 하는 값(예: JWT 서명 키), `super(...)` 를 불러야 하는 예외 클래스.
+
+```java
+// 권장
+@Service
+@RequiredArgsConstructor
+public class AuthService {
+    private final SecurityProperties properties;
+    ...
+    LocalDateTime.now().plus(properties.jwt().refreshTokenTtl());
+
+// 지양 (주입만 하는 긴 생성자)
+public AuthService(AccountRepository accountRepository, SecurityProperties properties, ...) {
+    this.accountRepository = accountRepository;
+    this.refreshTokenTtl = properties.jwt().refreshTokenTtl();
+    ...
+}
+```
 - `Optional` — 반환 타입에만 사용. 필드, 파라미터에 사용 금지.
 
 ---
@@ -114,6 +133,40 @@ public ResponseEntity<ApiResponse<UsageDto.Response>> getHistory(
     int page,
     int size
 ) { ... }
+```
+
+- **줄바꿈한 시그니처는 8칸 들여쓰기** — 120자를 넘어 매개변수·`throws` 를 줄바꿈할 때는 선언보다 8칸(두 단계) 들여쓴다. 본문(4칸)과 같은 깊이면 어디서 본문이 시작하는지 안 보인다. 생성자·record 선언도 같다. 긴 상수 이름은 static import 로 줄인다.
+
+```java
+// 권장 (매개변수 12칸, 본문 8칸)
+    public ResponseEntity<ApiResponse<Void>> logout(
+            @AuthenticationPrincipal Long accountId,
+            @CookieValue(name = REFRESH_TOKEN, required = false) String refreshToken) {
+        authService.logout(accountId, refreshToken);
+
+// 지양 (매개변수와 본문이 같은 깊이)
+    public ResponseEntity<ApiResponse<Void>> logout(
+        @AuthenticationPrincipal Long accountId,
+        @CookieValue(name = AuthCookies.REFRESH_TOKEN, required = false) String refreshToken) {
+        authService.logout(accountId, refreshToken);
+```
+
+- **서비스 호출 뒤 빈 줄** — 서비스(다른 Bean) 호출을 한 줄로 따로 쓰고 이어서 `return` 할 때는, 호출과 `return` 사이에 빈 줄을 한 줄 둔다. `return` 안에서 바로 호출하는 한 줄짜리는 해당 없다.
+
+```java
+// 권장
+AuthService.LoginResult result = authService.login(request);
+
+return ResponseEntity.ok()
+    .header(HttpHeaders.SET_COOKIE, ...)
+    .body(ApiResponse.success(result.account()));
+
+// 지양 (호출과 return 이 붙어 있음)
+AuthService.LoginResult result = authService.login(request);
+return ResponseEntity.ok()...;
+
+// 해당 없음 (return 안에서 바로 호출)
+return ResponseEntity.ok(ApiResponse.success(productService.getById(id)));
 ```
 
 ---
