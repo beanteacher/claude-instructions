@@ -102,3 +102,5 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 ## 테스트
 
 - 메서드 이름 쿼리·QueryDSL 쿼리·DB 제약 조건은 `@DataJpaTest` 로 확인한다.
+- 엔티티로는 만들 수 없는 값(enum 밖의 값 등)으로 DB 제약을 확인할 때만 `JdbcTemplate` 으로 직접 넣는다.
+  엔티티로 만들 수 있는 경우는 Repository 로 저장·삭제해서 확인한다.
