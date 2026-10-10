@@ -161,6 +161,28 @@ public AuthService(AccountRepository accountRepository, SecurityProperties prope
 
 - **메서드 시그니처 개행 금지** — 파라미터가 과도하게 긴 경우(라인 120자 초과 등)가 아니면 시그니처를 한 줄로 유지한다. 파라미터가 2~3개인 평범한 메서드를 굳이 여러 줄로 쪼개지 않는다.
 - 메서드 호출도 동일 — 특별히 길거나 가독성이 떨어지는 경우에만 개행한다.
+- **호출을 줄바꿈할 때는 괄호를 열고 바로 줄을 바꿔 인자를 한 줄에 하나씩** — 생성자·팩토리(`new Xxx(`, `Xxx.create(`, `Xxx.of(`) 호출이 한 줄을 넘으면 `(` 뒤에서 줄을 바꾸고, 인자를 한 단계(4칸) 들여 한 줄에 하나씩 둔다. 첫 줄에 인자 몇 개를 붙이고 나머지를 이어 쓰면 어느 괄호에서 시작했는지, 몇 번째 인자인지 안 보인다.
+  - 인자 자리에 스트림·조회 같은 긴 식을 넣지 않는다. 먼저 이름 있는 지역 변수로 받고 그 변수를 넘긴다.
+
+```java
+// 권장
+List<ProductDto.SpecResponse> specs = productSpecRepository
+    .findByProductIdOrderBySortOrder(productId).stream()
+    .map(ProductDto.SpecResponse::from)
+    .toList();
+
+return new ProductDto.AdminResponse(
+    productId,
+    product.getName(),
+    specs,
+    product.getDescription());
+
+// 지양 (괄호 뒤에 인자를 붙여 이어 쓰고, 인자 자리에서 스트림을 돌린다)
+return new ProductDto.AdminResponse(product.getId(), product.getName(),
+    productSpecRepository.findByProductIdOrderBySortOrder(product.getId()).stream()
+        .map(ProductDto.SpecResponse::from).toList(),
+    product.getDescription());
+```
 
 ```java
 // 권장
