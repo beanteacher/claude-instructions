@@ -185,6 +185,18 @@ public ResponseEntity<ApiResponse<UsageDto.Response>> getHistory(
         authService.logout(accountId, refreshToken);
 ```
 
+- **패키지 경로를 코드에 쓰지 않는다** — 클래스는 `import` 하고 본문에는 클래스 이름만 쓴다. 테스트 코드도 같다. 예외는 이름이 같은 클래스 두 개를 한 파일에서 써야 할 때뿐이며, 그때도 덜 쓰는 쪽 하나만 전체 경로로 쓴다.
+
+```java
+// 권장
+import org.springframework.test.web.servlet.ResultActions;
+...
+private ResultActions login(String userId, String password) throws Exception { ... }
+
+// 지양
+private org.springframework.test.web.servlet.ResultActions login(String userId, String password) throws Exception { ... }
+```
+
 - **서비스 호출 뒤 빈 줄** — 서비스(다른 Bean) 호출을 한 줄로 따로 쓰고 이어서 `return` 할 때는, 호출과 `return` 사이에 빈 줄을 한 줄 둔다. `return` 안에서 바로 호출하는 한 줄짜리는 해당 없다.
 
 ```java
@@ -209,6 +221,24 @@ return ResponseEntity.ok(ApiResponse.success(productService.getById(id)));
 
 - 엔티티마다 별도 예외 클래스 생성 금지. 공통 `EntityNotFoundException` 하나를 두고 엔티티명을 파라미터로 전달.
 - 모든 예외는 `GlobalExceptionHandler`에서 일괄 처리. 각 Controller에 예외 처리 산재 금지.
+
+### 입력 검증 위치 — `@Valid` 냐 서비스냐
+
+```
+요청 본문만 보고 판단할 수 있다 → @Valid (DTO 어노테이션)
+  빈 값·길이·바이트 수·숫자 범위·정규식 형식
+  → VALIDATION_ERROR + errors[{ field, message }] 가 자동으로 붙는다
+  → 표준 어노테이션으로 안 되면 common/validation 에 검사 어노테이션을 만든다 (예: @MaxBytes)
+  → 서비스에서 형식 검사를 하고 VALIDATION_ERROR 를 던지지 않는다 (칸 정보가 빠진다)
+
+DB·현재 상태를 봐야 안다 → 서비스에서 AppException(ErrorCode.상황별코드)
+  현재 비밀번호 불일치·중복·없는 대상·재고 부족·상태상 불가
+  → 상황마다 오류 코드를 따로 둔다 (화면이 코드로 분기할 수 있게)
+  → 특정 칸·줄이 문제면 errors 에 담아 준다
+
+예외: 로그인처럼 실패 이유를 알려 주면 안 되는 곳은 형식 검사를 하지 않고
+      한 가지 오류(LOGIN_FAILED)로만 답한다. 서버 보호용 길이 상한만 @Valid 로 둔다.
+```
 
 ---
 
