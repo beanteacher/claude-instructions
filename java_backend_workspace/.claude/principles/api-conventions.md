@@ -20,11 +20,12 @@
 
 - `/api/v1/{resource}` 패턴을 기본으로 사용한다. 예:
   ```
-  /api/v1/products
-  /api/v1/products/{id}
-  /api/v1/orders
+  /api/v1/product
+  /api/v1/product/{id}
+  /api/v1/order
   /api/v1/auth/login
   ```
+- 자원 이름은 단수형으로 쓴다 (`product`, `category`). 복수형과 섞지 않는다.
 - 외부 공개 API 가 없거나 내부 운영 콘솔 전용이면 `/api/v1/` 세그먼트를 생략하고 도메인 경로로 시작할 수 있다. 버전 정책은 프로젝트 시작 시 결정하고 `CLAUDE.md` 에 명시한다.
 - **공개 경로는 반드시 `SecurityConfig` 의 `permitAll` 목록에 명시**한다. 기본은 인증 요구.
 - HTTP method 시맨틱을 지킨다.
@@ -74,7 +75,7 @@
 
 ```java
 @RestController
-@RequestMapping("/api/v1/products")
+@RequestMapping("/api/v1/product")
 @RequiredArgsConstructor
 public class ProductController {
 

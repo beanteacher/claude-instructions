@@ -46,7 +46,7 @@ public class ProductDto {
 
 ```java
 @RestController
-@RequestMapping("/api/v1/products")
+@RequestMapping("/api/v1/product")
 @RequiredArgsConstructor
 public class ProductController {
 
