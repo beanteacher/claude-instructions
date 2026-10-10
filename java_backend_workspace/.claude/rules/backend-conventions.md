@@ -49,6 +49,40 @@
         public static Response from(Product product) { return new Response(...); }
 
 규칙 6. record는 불변(immutable) — Setter, Lombok @Builder 사용 금지.
+
+규칙 7. 계층별 DTO 분리 — 누구에게 넘기는지에 따라 이름 끝을 나눈다.
+        Request / Response  프론트와 주고받는 API 형식 (JSON 으로 나가는 것만)
+        Result              서비스가 컨트롤러에 돌려주는 값 (쿠키·헤더로 나갈 값 등 응답 본문에 없는 것 포함)
+        → Response 안에 Result 를, Result 안에 Response 를 넣지 않는다.
+        → 컨트롤러가 Response.from(result) 로 바꿔서 내보낸다.
+        → 서비스 결과가 Response 와 똑같으면 Result 를 만들지 않고 Response 를 바로 돌려준다.
+        → 파일 안에서 "API 요청·응답" 묶음과 "서비스 → 컨트롤러" 묶음을 주석으로 나눈다.
+
+규칙 8. 서비스 입력(Command)은 필요할 때만 만든다. 기본은 서비스가 Request 를 그대로 받는다.
+        아래 중 하나라도 해당하면 → {동작}Command record 를 만든다
+        1. 같은 서비스를 HTTP 말고 다른 곳(배치·메시지·다른 서비스)에서도 부른다
+        2. 서비스에 넘길 값이 요청 본문과 다르고, 따로 넘길 매개변수가 3개를 넘는다
+           (로그인 정보·경로 값 1~2개는 매개변수로 따로 넘긴다: changePassword(accountId, request))
+        3. 요청 본문에 서비스가 믿으면 안 되는 값(화면 표시용 값 등)이 섞여 있다
+        → 모두 아니면 Request 와 필드가 똑같은 Command 를 미리 만들지 않는다.
+```
+
+```java
+// 권장
+public record LoginResponse(Long id, String userId, Role role) {
+    public static LoginResponse from(LoginResult result) { ... }
+}
+public record LoginResult(Long id, String userId, Role role, String accessToken, String refreshToken) {}
+
+// 컨트롤러
+LoginResult result = authService.login(request);
+
+return ResponseEntity.ok()
+    .header(HttpHeaders.SET_COOKIE, authCookies.accessToken(result.accessToken()).toString())
+    .body(ApiResponse.success(LoginResponse.from(result)));
+
+// 지양 (Result 가 Response 를 품고 있어 어디까지가 API 형식인지 흐려진다)
+public record LoginResult(LoginResponse account, String accessToken, String refreshToken) {}
 ```
 
 ---
