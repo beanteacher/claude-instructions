@@ -17,7 +17,12 @@
     - 그 엔티티를 만들 때 `Order 로 바꾼다` 로 검색하고, 마이그레이션의 `REFERENCES {테이블}` 과 엔티티의 `Long xxxId` 도 함께 확인한다.
     - 필드·`create(...)`·호출하는 서비스·테스트만 고친다. 컬럼과 FK 는 이미 있어 마이그레이션은 필요 없다.
       없는 대상을 DB 가 막는지 보는 테스트는 `em.getReference(Order.class, 999_999L)` 로 넘긴다.
-  - 반대 방향 목록(`@OneToMany`)은 부모와 함께 저장·삭제하는 경우(cascade·orphanRemoval)에만 둔다.
+      단, `create(parent, ...)` 가 부모 목록에 넣는 엔티티(아래 `addXxx`)는 부모를 읽어서 이 방법이 안 된다 → `JdbcTemplate` 으로 직접 넣는다.
+  - 부모가 자식 목록을 읽으면 부모에 읽기용 `@OneToMany(mappedBy = "...")` 를 둔다. 자식을 Repository 로 따로 읽어 `Map` 으로 나누지 않는다.
+    - 저장·삭제는 자식 Repository 로 한다. `cascade`·`orphanRemoval` 은 쓰지 않는다 — Hibernate 는 새 행 넣기를 지우기보다 먼저 실행해, 같은 값으로 다시 넣으면 유니크 제약에 걸린다.
+    - 같은 트랜잭션에서 읽어도 맞도록 부모 목록을 함께 맞춘다: 자식 `create(parent, ...)` 안에서 `parent.addXxx(this)`(같은 패키지만 부르게 package-private), 지울 때 `parent.removeXxx(...)`.
+    - getter 는 `Collections.unmodifiableList(...)` 로 돌려준다. 순서가 있으면 `@OrderBy`.
+    - 여러 부모의 목록을 펼치는 곳(목록 화면)을 위해 `hibernate.default_batch_fetch_size` 를 켠다 → IN 쿼리 한 번.
   - 메서드 이름 쿼리는 그대로 id 로 쓸 수 있다: `findByParentId(Long)` 는 `parent.id` 로 풀린다.
     그래서 엔티티에 `getParentId()` 같은 편의 getter 를 두지 않는다 — Spring Data 가 그 이름을 속성으로 착각해 켜질 때 실패한다.
 - 스키마 검사(`ddl-auto: validate`)를 켠 프로젝트에서 JPA 기본 타입과 다른 컬럼은 `columnDefinition` 으로 맞춘다.
@@ -30,6 +35,8 @@
 ```
 메서드 이름 쿼리로 되면 → 그대로 쓴다
   findBy·existsBy·countBy·deleteBy + 조건 몇 개
+  → 정렬도 이름에 넣는다: findByParentIsNullOrderBySortOrderAscIdAsc()
+    Sort 매개변수로 넘기지 않는다 — 부르는 곳마다 정렬이 달라질 수 있고, 정렬 한 줄을 감싸는 private 메서드가 생긴다
 
 안 되면 → QueryDSL
   GROUP BY·집계, 조인, 동적 조건, 여러 컬럼만 골라 읽기

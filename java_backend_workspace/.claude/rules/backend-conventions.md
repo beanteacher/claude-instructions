@@ -211,6 +211,23 @@ public ResponseEntity<ApiResponse<UsageDto.Response>> getHistory(
         authService.logout(accountId, refreshToken);
 ```
 
+- **컨트롤러 핸들러 매개변수는 개수로 정한다** — 매개변수가 하나면 120자를 넘어도 시그니처를 한 줄로 쓴다. 두 개 이상이면 `(` 뒤에서 줄을 바꾸고 한 줄에 하나씩, 8칸 들여 쓴다. 매번 길이를 재지 않고 개수만 보고 정하려는 규칙이다.
+
+```java
+// 권장 (하나는 한 줄, 둘 이상은 한 줄에 하나씩)
+    public ResponseEntity<ApiResponse<ProductDto.AdminResponse>> create(@Valid @RequestBody ProductDto.SaveRequest request) {
+
+    public ResponseEntity<ApiResponse<ProductDto.AdminResponse>> update(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductDto.SaveRequest request) {
+
+// 지양 (하나인데 줄을 바꾸고, 둘인데 한 줄에 붙인다)
+    public ResponseEntity<ApiResponse<ProductDto.AdminResponse>> create(
+            @Valid @RequestBody ProductDto.SaveRequest request) {
+
+    public ResponseEntity<ApiResponse<ProductDto.AdminResponse>> update(@PathVariable Long id, @Valid @RequestBody ProductDto.SaveRequest request) {
+```
+
 - **패키지 경로를 코드에 쓰지 않는다** — 클래스는 `import` 하고 본문에는 클래스 이름만 쓴다. 테스트 코드도 같다. 예외는 이름이 같은 클래스 두 개를 한 파일에서 써야 할 때뿐이며, 그때도 덜 쓰는 쪽 하나만 전체 경로로 쓴다.
 
 ```java

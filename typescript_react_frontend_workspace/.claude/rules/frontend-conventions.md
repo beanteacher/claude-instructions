@@ -60,6 +60,23 @@ export default function ComponentName({ title, onSubmit }: Props) {
 - 구조 분해 할당으로 props 받기
 - 조건부 렌더링 시 early return 패턴 사용
 
+### 반복되는 UI 는 공용 컴포넌트로
+- 같은 모양(태그 + 클래스)이 **두 군데 이상** 나오면 공용 컴포넌트로 빼고, 다른 부분만 props 로 받는다.
+  - 화면 제목처럼 도메인과 무관하면 `shared/ui/`, 판매 구분 라벨처럼 도메인 값을 보여주면 `entities/<도메인>/ui/`.
+  - 모양이 몇 가지로 나뉘면(쇼핑몰·관리자 등) `variant` prop 하나로 고른다. 클래스 문자열을 props 로 넘기지 않는다.
+- 새 화면을 만들기 전에 `shared/ui/index.ts` 와 해당 `entities/*/ui` 를 먼저 확인하고, 있으면 그걸 쓴다.
+- 한 번만 쓰는 모양은 미리 빼지 않는다 — 두 번째로 쓸 때 뺀다.
+
+```tsx
+// 권장
+<PageTitle title="재고·중고품" />
+<PageTitle title="분류 관리" variant="admin" />
+
+// 지양 (같은 태그·클래스를 화면마다 반복)
+<h1 className="text-2xl font-bold">재고·중고품</h1>
+<h1 className="text-2xl font-bold">신제품</h1>
+```
+
 ### Server vs Client 컴포넌트
 ```tsx
 // 기본은 Server Component (별도 선언 불필요)
