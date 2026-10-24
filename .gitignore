@@ -39,3 +39,5 @@
 #    SW-KITCHEN-FRONTEND)로 관리한다 — 여기엔 안 담는다.
 /java_backend_workspace/SW-KITCHEN-BACKEND/
 /typescript_react_frontend_workspace/SW-KITCHEN-FRONTEND/
+# 7) headroom 이 실행 중에 넣고 빼는 기록 파일
+**/.headroom_wrap_*
