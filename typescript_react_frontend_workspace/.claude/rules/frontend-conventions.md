@@ -63,8 +63,7 @@ export default function ComponentName({ title, onSubmit }: Props) {
 ### 반복되는 UI 는 공용 컴포넌트로
 - 같은 모양(태그 + 클래스)이 **두 군데 이상** 나오면 공용 컴포넌트로 빼고, 다른 부분만 props 로 받는다.
   - 화면 제목처럼 도메인과 무관하면 `shared/ui/`, 판매 구분 라벨처럼 도메인 값을 보여주면 `entities/<도메인>/ui/`.
-  - 모양이 몇 가지로 나뉘면(쇼핑몰·관리자 등) `variant` prop 하나로 고른다. 클래스 문자열을 props 로 넘기지 않는다.
-- 새 화면을 만들기 전에 `shared/ui/index.ts` 와 해당 `entities/*/ui` 를 먼저 확인하고, 있으면 그걸 쓴다.
+- 새 화면을 만들기 전에 `shared/ui/index.ts`(관리자 부품을 나눈 프로젝트는 `shared/ui/admin/index.ts` 도)와 해당 `entities/*/ui` 를 먼저 확인하고, 있으면 그걸 쓴다.
 - 한 번만 쓰는 모양은 미리 빼지 않는다 — 두 번째로 쓸 때 뺀다.
 
 ```tsx
@@ -75,6 +74,31 @@ export default function ComponentName({ title, onSubmit }: Props) {
 // 지양 (같은 태그·클래스를 화면마다 반복)
 <h1 className="text-2xl font-bold">재고·중고품</h1>
 <h1 className="text-2xl font-bold">신제품</h1>
+```
+
+### 디자인 체계가 둘이면 부품을 나눈다 (관리자 화면이 있는 프로젝트)
+- 프로젝트에 디자인 체계가 하나뿐이면(사용자 화면만, 또는 관리 도구만) 부품도 `shared/ui/` 한 벌로 간다. 아래는 적용하지 않는다.
+- 관리자 화면과 사용자 화면이 함께 있고 시안의 크기·색 체계가 다르면, 그 체계를 따르는 부품은 나눈다.
+  - 왜: 관리자 화면은 한 번에 많은 정보를 보여 주려고 촘촘하게(작은 글자·낮은 칸·좁은 여백·각진 모서리),
+    사용자 화면은 깔끔하게(넉넉한 여백·큰 버튼·둥근 모서리) 만든다. 한 부품에 두 체계를 섞으면 한쪽 시안에 맞출 때 다른 쪽이 어긋난다.
+  - 대상: 버튼·입력칸·표처럼 크기·색 체계를 따르는 부품. 관리자용은 `shared/ui/admin/` (예: `AdminButton`, `AdminInput`, `AdminTable`),
+    사용자용은 `shared/ui/` 에 둔다.
+  - 관리자 화면에서는 `admin/` 부품을, 사용자 화면에서는 사용자 부품을 쓴다. 크기·색 값은 그 화면의 시안을 따른다.
+  - 관리자 화면이 있어도 두 화면의 시안이 같은 체계를 쓰면 나누지 않는다.
+- 나누지 않고 하나로 두는 경우
+  - 작은 차이(제목 크기, 라벨 모양 등)만 다르면 `variant` prop 하나로 고른다
+    (`<PageTitle variant="admin" />`, `<SalesTypeBadge variant="admin" />`). 클래스 문자열을 props 로 넘기지 않는다.
+  - 화면과 상관없는 부품(알림 창 틀 `Dialog`, 상태 문구 `StatusView` 등)은 하나로 같이 쓴다.
+- 판단: 크기·여백·색·모서리 중 둘 이상이 다르면 나누고, 하나만 다르면 `variant`. 애매하면 하나로 두고, 시안에 맞추다 다른 화면이 어긋나기 시작하면 그때 나눈다.
+
+```tsx
+// 디자인 체계가 둘인 프로젝트 (예: 쇼핑몰 + 관리자)
+<AdminButton size="xs" variant="outline">수정</AdminButton>   // 관리자 화면
+<Button size="lg">장바구니 담기</Button>                        // 사용자 화면
+
+// 지양 (한 버튼에 관리자·사용자 크기·색을 섞어 둔다)
+<Button size="xs" variant="outline">수정</Button>
+<Button size="lg">장바구니 담기</Button>
 ```
 
 ### Server vs Client 컴포넌트
