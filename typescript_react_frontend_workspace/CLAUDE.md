@@ -9,6 +9,7 @@ TypeScript / React / Next.js 프론트엔드 프로젝트 전용 워크스페이
 - `frontend-architecture.md` — Feature-Sliced Design(FSD) + Next.js App Router 구조·레이어 의존 규칙
 - `frontend-conventions.md` — 네이밍·컴포넌트·상태관리·API 호출·스타일링·TS 규칙
 - `frontend-library-stack.md` — 권장 스택(Tailwind/shadcn/react-query/zustand/RHF+zod/ky/date-fns 등)
+- `frontend-feedback.md` — 알림 기준: 칸 빨간 글씨·영역 안내·토스트·확인 창·안내 창·완료 화면 중 무엇을 쓸지
 
 > 금지 패키지 주의: `axios 1.14.1` / `axios 0.30.4` (공급망 공격 확인 버전) — 설치 금지.
 

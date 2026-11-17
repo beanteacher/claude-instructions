@@ -38,7 +38,7 @@
 | A1 | 산출물 관리대장 | `A1-document-register.md` | 산출물 목록 |
 | A2 | 제품 요구사항 문서 (PRD) | `A2-prd.md` | 비전 문서, 용어 사전, 범위·Phase, 제품 공통 NFR |
 | A3 | 결정·이슈 기록 | `A3-decision-log.md` | 결정 기록, ADR, 위험·이슈 관리대장 |
-| B2 | 요구사항 정의서 (기능별) | `B2-requirements-<feature>.md` | 요구사항 정의서, 유저 스토리, 화면 목록, 인수 시험 시나리오(→ AC), 기능별 NFR |
+| B2 | 요구사항 정의서 (기능별) | `B2-requirements/<feature>.md` | 요구사항 정의서, 유저 스토리, 화면 목록, 인수 시험 시나리오(→ AC), 기능별 NFR |
 | C1 | 아키텍처 설계서 | `C1-architecture.md` | 아키텍처 설계서, 보안 설계서 |
 | C3 | 데이터베이스 설계서 | `C3-database-design.md` | DB 설계서·ERD, 초기 데이터 설계서 |
 | C4 | API 설계서 | `C4-api-design.md` | 인터페이스 설계서 |
